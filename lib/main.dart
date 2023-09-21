@@ -1,14 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-
-class MyViewModel extends ChangeNotifier {
-  final List<List<String>> tableData = [
-    ['Header 1', 'Header 2', 'Header 3'],
-    ['Row 1, Cell 1', 'Row 1, Cell 2', 'Row 1, Cell 3'],
-    ['Row 2, Cell 1', 'Row 2, Cell 2', 'Row 2, Cell 3'],
-  ];
-}
 void main() {
   runApp(MyApp());
 }
@@ -17,37 +8,44 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: ChangeNotifierProvider(
-        create: (context) => MyViewModel(), // Provide the viewmodel
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Table Example with Viewmodel'),
-          ),
-          body: MyTable(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('GridView Example with Click Function'),
         ),
+        body: MyGridView(),
       ),
     );
   }
 }
 
-class MyTable extends StatelessWidget {
+class MyGridView extends StatelessWidget {
+  final List<String> items = List.generate(20, (index) => 'Item $index');
+
+  void onItemClick(String item) {
+    print('Clicked on $item');
+    // 可以在這裡執行任何點擊後的操作
+  }
+
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<MyViewModel>(context); // Access the viewmodel
-
-    return Table(
-      border: TableBorder.all(),
-      children: viewModel.tableData.map((rowData) {
-        return TableRow(
-          children: rowData.map((cellData) {
-            return TableCell(
-              child: Center(
-                child: Text(cellData),
-              ),
-            );
-          }).toList(),
+    return GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // 設定列數
+      ),
+      itemCount: items.length,
+      itemBuilder: (BuildContext context, int index) {
+        return GestureDetector(
+          onTap: () {
+            onItemClick(items[index]);
+          },
+          child: Card(
+            margin: EdgeInsets.all(8.0),
+            child: Center(
+              child: Text(items[index]),
+            ),
+          ),
         );
-      }).toList(),
+      },
     );
   }
 }
